@@ -1,0 +1,433 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Comunidades · octubre 2026 · corte al 15</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Asap:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--navy:#0D1E39;--teal:#39BB9B;--amarillo:#FED41E;--morado:#5A2899;--naranja:#F98D21;
+--papel:#F5F8F9;--blanco:#FFF;--linea:#DCE5E8;--suave:#5B6C80;--dato:#EDF2F4;}
+*{box-sizing:border-box;}
+body{margin:0;background:var(--papel);color:var(--navy);font-family:'Asap',system-ui,sans-serif;font-size:16px;line-height:1.55;-webkit-font-smoothing:antialiased;}
+.wrap{max-width:1080px;margin:0 auto;padding:0 24px;}
+header.top{background:var(--navy);color:#fff;padding:30px 0 26px;}
+header.top .eyebrow{color:var(--teal);font-weight:600;font-size:13.5px;margin:0 0 5px;}
+header.top h1{margin:0;font-size:clamp(23px,3.2vw,34px);font-weight:700;line-height:1.15;letter-spacing:-.02em;}
+header.top p.sub{margin:9px 0 0;color:#B9C7D6;font-size:14px;max-width:68ch;}
+nav.tabs{position:sticky;top:0;z-index:20;background:var(--blanco);border-bottom:1px solid var(--linea);}
+nav.tabs .wrap{display:flex;gap:2px;overflow-x:auto;}
+nav.tabs button{font-family:inherit;font-size:15px;font-weight:600;background:none;border:none;border-bottom:3px solid transparent;color:var(--suave);padding:15px 14px 12px;cursor:pointer;white-space:nowrap;}
+nav.tabs button:hover{color:var(--navy);}
+nav.tabs button.on{color:var(--navy);border-bottom-color:var(--teal);}
+nav.tabs button:focus-visible{outline:2px solid var(--morado);outline-offset:-4px;}
+main{padding:28px 0 60px;}
+.panel{display:none;} .panel.on{display:block;}
+.panel>h2.titulo{font-size:23px;margin:0 0 3px;font-weight:700;letter-spacing:-.01em;}
+.panel>p.bajada{margin:0 0 20px;color:var(--suave);font-size:14.5px;max-width:70ch;}
+.embudo{display:flex;flex-wrap:wrap;margin:0 0 18px;background:var(--blanco);border:1px solid var(--linea);border-radius:10px;overflow:hidden;}
+.paso{flex:1 1 140px;padding:14px 16px;border-right:1px solid var(--linea);}
+.paso:last-child{border-right:none;}
+.paso .orden{font-size:10.5px;font-weight:700;color:var(--teal);letter-spacing:.06em;text-transform:uppercase;}
+.paso .v{font-size:25px;font-weight:700;line-height:1.1;letter-spacing:-.02em;margin-top:2px;}
+.paso .l{font-size:12.4px;color:var(--suave);}
+.paso.pct .v{color:var(--morado);} .paso.dinero .v{color:#166B54;} .paso.cero .v{color:var(--naranja);}
+.bloque{background:var(--blanco);border:1px solid var(--linea);border-radius:10px;padding:19px 22px 17px;margin-bottom:18px;}
+.bloque h3{margin:0 0 13px;font-size:17px;font-weight:700;}
+.bloque h3 .n{display:inline-block;width:22px;height:22px;border-radius:5px;background:var(--dato);font-size:12.5px;font-weight:700;text-align:center;line-height:22px;margin-right:9px;vertical-align:2px;}
+h4.graf{margin:20px 0 9px;font-size:14px;font-weight:700;}
+h4.graf:first-of-type{margin-top:2px;}
+.serie{display:flex;align-items:flex-end;gap:4px;border-bottom:2px solid var(--linea);padding:0 2px;}
+.serie .d{flex:1;height:100%;display:flex;flex-direction:column;justify-content:flex-end;align-items:center;}
+.serie .d.hoy{background:rgba(254,212,30,.25);border-radius:4px 4px 0 0;}
+.serie .c{font-size:11px;font-weight:700;margin-bottom:3px;}
+.serie .c.v0{color:#C8D2DA;font-weight:400;}
+.serie .b{width:100%;border-radius:3px 3px 0 0;min-height:2px;position:relative;}
+.serie .b.teal{background:var(--teal);} .serie .b.morado{background:var(--morado);}
+.serie .b.naranja{background:var(--naranja);} .serie .b.navy{background:var(--navy);}
+.serie .pt{position:absolute;top:-10px;left:50%;transform:translateX(-50%);width:8px;height:8px;border-radius:50%;background:var(--morado);border:1.5px solid #fff;}
+.eje{display:flex;gap:4px;padding:5px 2px 0;}
+.eje span{flex:1;text-align:center;font-size:11px;color:var(--suave);}
+.eje span.hoy{color:var(--navy);font-weight:700;background:rgba(254,212,30,.4);border-radius:3px;}
+.tabla-cont{overflow-x:auto;}
+table{border-collapse:collapse;width:100%;font-size:14.2px;}
+th{background:var(--dato);text-align:left;padding:8px 11px;font-weight:600;border-bottom:2px solid var(--linea);white-space:nowrap;}
+td{padding:8px 11px;border-bottom:1px solid var(--linea);vertical-align:top;}
+tbody tr:last-child td{border-bottom:none;}
+tr.total td{font-weight:700;background:#F1F6F8;border-top:2px solid var(--linea);}
+tr.sub td{background:#FAFCFD;font-weight:600;}
+tr.apag td{color:#8B9BAC;}
+td.num,th.num{text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap;}
+td.utm{font-family:ui-monospace,Menlo,monospace;font-size:12.3px;color:var(--morado);word-break:break-all;}
+.pill{display:inline-block;padding:2px 8px;border-radius:20px;font-size:12.2px;font-weight:600;white-space:nowrap;}
+.p-ok{background:#DFF3EC;color:#166B54;} .p-med{background:#FEF4CE;color:#7A5D00;}
+.p-no{background:#FDE7D2;color:#8A4409;} .p-inv{background:#E8E2F4;color:#43206F;}
+.barras .item{display:grid;grid-template-columns:235px 1fr 56px;gap:12px;align-items:center;margin-bottom:8px;font-size:13.6px;}
+.barras .track{background:var(--dato);border-radius:4px;height:21px;overflow:hidden;}
+.barras .fill{height:100%;border-radius:4px;background:var(--teal);}
+.f-am{background:var(--amarillo)!important;} .f-mo{background:var(--morado)!important;}
+.f-na{background:var(--naranja)!important;} .f-nv{background:var(--navy)!important;}
+.barras .val{text-align:right;font-weight:700;font-variant-numeric:tabular-nums;}
+.meta{margin:14px 0 0;}
+.meta .fila{display:flex;justify-content:space-between;font-size:13.5px;margin-bottom:6px;font-weight:600;}
+.pista{background:var(--dato);border-radius:6px;height:24px;overflow:hidden;}
+.avance{height:100%;background:var(--teal);display:flex;align-items:center;padding-left:10px;color:#fff;font-size:12.5px;font-weight:700;}
+.avance.bajo{background:var(--naranja);} .avance.cero{background:#C0392B;}
+.alerta{border-radius:8px;padding:12px 16px;margin:0 0 12px;font-size:14.2px;border-left:4px solid;}
+.alerta b{display:block;margin-bottom:3px;font-size:14.5px;}
+.a-rojo{background:#FDECEC;border-color:#C0392B;} .a-rojo b{color:#A5281B;}
+.a-ambar{background:#FFF6E6;border-color:var(--naranja);} .a-ambar b{color:#8A4409;}
+.a-verde{background:#EDF7F4;border-color:var(--teal);} .a-verde b{color:#166B54;}
+.analisis{background:#EDF7F4;border-left:4px solid var(--teal);border-radius:8px;padding:11px 15px;margin:14px 0 0;font-size:14.2px;}
+.analisis .et{display:block;font-weight:700;font-size:12.5px;color:#166B54;margin-bottom:3px;}
+.analisis p{margin:0;} .analisis p+p{margin-top:6px;}
+.accion{background:#FFF6E6;border-left:4px solid var(--naranja);border-radius:8px;padding:11px 15px;margin:9px 0 0;font-size:14.2px;}
+.accion .et{display:block;font-weight:700;font-size:12.5px;color:#8A4409;margin-bottom:3px;}
+.accion p{margin:0;} .accion p+p{margin-top:6px;}
+.nota{font-size:12.5px;color:var(--suave);margin:8px 0 0;}
+.leyenda-pt{display:flex;align-items:center;gap:7px;font-size:12.3px;color:var(--suave);margin-top:9px;}
+.leyenda-pt i{width:8px;height:8px;border-radius:50%;background:var(--morado);display:inline-block;}
+.hoybox{background:#FFFDF5;border:2px solid var(--amarillo);border-radius:10px;padding:17px 21px 15px;margin:0 0 18px;}
+.hoybox h3{margin:0 0 11px;font-size:16px;font-weight:700;}
+.hoybox h3 .dia{display:inline-block;background:var(--amarillo);border-radius:5px;padding:1px 9px;font-size:12px;margin-right:9px;vertical-align:2px;}
+.hoybox .filas{display:flex;flex-wrap:wrap;gap:8px;}
+.hoybox .f{flex:1 1 135px;background:var(--blanco);border:1px solid var(--linea);border-radius:8px;padding:10px 12px;}
+.hoybox .f .n{font-size:20px;font-weight:700;line-height:1.1;}
+.hoybox .f .t{font-size:12.3px;color:var(--suave);}
+.hoybox .f.bien .n{color:#166B54;} .hoybox .f.ojo .n{color:var(--naranja);}
+@media(max-width:860px){.bloque{padding:15px 13px;}.barras .item{grid-template-columns:130px 1fr 46px;font-size:12.4px;}
+.serie .c{font-size:8px;}.eje span{font-size:8.5px;}}
+footer{border-top:1px solid var(--linea);padding:20px 0 34px;color:var(--suave);font-size:12.5px;}
+</style>
+</head>
+<body>
+
+<header class="top"><div class="wrap">
+  <p class="eyebrow">Entrelingo Group · Comunidades</p>
+  <h1>Reporte de comunidades · octubre 2026, corte al 15</h1>
+  <p class="sub">Seguimiento diario de las 34 URL etiquetadas sobre las cuatro propiedades de GA4. Los ingresos salen de WooCommerce pedido a pedido; GA4 solo localiza los candidatos. Moneda: AUD.</p>
+</div></header>
+
+<nav class="tabs"><div class="wrap">
+  <button class="on" data-t="traducciones">Traducciones</button>
+  <button data-t="skillspro">SkillsPRO</button>
+  <button data-t="australiapro">AustraliaPRO</button>
+  <button data-t="comparativo">Septiembre vs octubre</button>
+</div></nav>
+
+<main><div class="wrap">
+
+<!-- TRADUCCIONES -->
+<section class="panel on" id="traducciones">
+  <h2 class="titulo">Entrelingo Traducciones</h2>
+  <p class="bajada">Dos enlaces del canal con tráfico: cotizador por WhatsApp y cotizador por Facebook.</p>
+
+  <div class="embudo">
+    <div class="paso"><div class="orden">1 · Clics</div><div class="v">54</div><div class="l">Sesiones al 15</div></div>
+    <div class="paso"><div class="orden">2 · Compras</div><div class="v">2</div><div class="l">Verificadas en WooCommerce</div></div>
+    <div class="paso pct"><div class="orden">3 · Tasa</div><div class="v">3,7 %</div><div class="l">Compras sobre clics</div></div>
+    <div class="paso dinero"><div class="orden">4 · Ingreso</div><div class="v">$94,88</div><div class="l">Atribuible al canal</div></div>
+    <div class="paso cero"><div class="orden">5 · Meta</div><div class="v">4,7 %</div><div class="l">De A$2.000</div></div>
+  </div>
+
+  <div class="bloque">
+    <h3><span class="n">1</span>Tráfico día a día</h3>
+    <div class="serie" style="height:120px"><div class="d"><span class="c">6</span><div class="b teal" style="height:60%"></div></div><div class="d"><span class="c">10</span><div class="b teal" style="height:100%"> <i class="pt"></i></div></div><div class="d"><span class="c">8</span><div class="b teal" style="height:80%"></div></div><div class="d"><span class="c">2</span><div class="b teal" style="height:20%"></div></div><div class="d"><span class="c">1</span><div class="b teal" style="height:10%"></div></div><div class="d"><span class="c">6</span><div class="b teal" style="height:60%"></div></div><div class="d"><span class="c">6</span><div class="b teal" style="height:60%"></div></div><div class="d"><span class="c">3</span><div class="b teal" style="height:30%"></div></div><div class="d"><span class="c">3</span><div class="b teal" style="height:30%"></div></div><div class="d"><span class="c">2</span><div class="b teal" style="height:20%"></div></div><div class="d"><span class="c v0">0</span><div class="b teal" style="height:0%"></div></div><div class="d"><span class="c">1</span><div class="b teal" style="height:10%"></div></div><div class="d"><span class="c">2</span><div class="b teal" style="height:20%"> <i class="pt"></i></div></div><div class="d"><span class="c">2</span><div class="b teal" style="height:20%"> <i class="pt"></i></div></div><div class="d hoy"><span class="c">2</span><div class="b teal" style="height:20%"></div></div></div><div class="eje"><span class="">1</span><span class="">2</span><span class="">3</span><span class="">4</span><span class="">5</span><span class="">6</span><span class="">7</span><span class="">8</span><span class="">9</span><span class="">10</span><span class="">11</span><span class="">12</span><span class="">13</span><span class="">14</span><span class="hoy">15</span></div>
+    <div class="leyenda-pt"><i></i> Los puntos marcan los días con pedido.</div>
+    <h4 class="graf">Tráfico por enlace</h4>
+    <div class="tabla-cont"><table>
+      <thead><tr><th>Enlace</th><th class="num">Sesiones</th><th class="num">Compras</th><th>Comportamiento</th></tr></thead>
+      <tbody>
+        <tr><td class="utm">comunidades / cotizador / whatssapp</td><td class="num">36</td><td class="num">2</td><td>La más constante del lote: tráfico 12 de los 15 días.</td></tr>
+        <tr><td class="utm">comunidades / cotizador / facebook</td><td class="num">18</td><td class="num">0</td><td>Fuerte del 1 al 3, luego casi apagada. Reaparece hoy con 2.</td></tr>
+        <tr class="total"><td>Total</td><td class="num">54</td><td class="num">2</td><td></td></tr>
+      </tbody>
+    </table></div>
+    <div class="analisis"><span class="et">Análisis</span>
+      <p>El cotizador por WhatsApp sostiene la línea otra vez: 36 sesiones y las dos compras confirmadas. Facebook lleva 18 sesiones sin una sola compra en quince días, cuando en septiembre sí convirtió.</p>
+    </div>
+    <div class="accion"><span class="et">Solución</span><p>Revisar el mensaje que acompaña el enlace en Facebook: trae tráfico equivalente a la mitad de WhatsApp y lleva quince días sin cerrar una sola compra.</p></div>
+  </div>
+
+  <div class="bloque">
+    <h3><span class="n">2</span>Ventas confirmadas</h3>
+    <div class="tabla-cont"><table>
+      <thead><tr><th>Pedido</th><th>Fecha</th><th>Cliente</th><th>Producto</th><th>Origen en WooCommerce</th><th class="num">AUD</th></tr></thead>
+      <tbody>
+        <tr><td>#Wc0004221</td><td>2 oct</td><td>María Victoria Manen</td><td>Traducciones</td><td class="utm">comunidades / cotizador / whatssapp</td><td class="num">64,89</td></tr>
+        <tr><td>#Wc0004428</td><td>13 oct</td><td>David Davalos</td><td>Certificada Express</td><td class="utm">comunidades / cotizador / whatssapp</td><td class="num">29,99</td></tr>
+        <tr class="total"><td colspan="5">Total confirmado · 2 compras</td><td class="num">94,88</td></tr>
+      </tbody>
+    </table></div>
+    <h4 class="graf">Qué pasaba esos días en el canal</h4>
+    <div class="tabla-cont"><table>
+      <thead><tr><th>Fecha de la compra</th><th class="num">Sesiones del cotizador ese día</th><th>Contexto</th></tr></thead>
+      <tbody>
+        <tr><td>2 de octubre</td><td class="num">10</td><td>El día más alto del mes en el cotizador: 5 por WhatsApp y 5 por Facebook.</td></tr>
+        <tr><td>13 de octubre</td><td class="num">2</td><td>Día de poco tráfico, 2 sesiones por WhatsApp. La compra llegó con el canal ya frío.</td></tr>
+      </tbody>
+    </table></div>
+    <div class="meta">
+      <div class="fila"><span>Meta de octubre</span><span>94,88 / 2.000 AUD</span></div>
+      <div class="pista"><div class="avance cero" style="width:4.7%">4,7 %</div></div>
+    </div>
+    <div class="analisis"><span class="et">Análisis</span>
+      <p>Las dos compras del mes entraron por el cotizador de WhatsApp, con once días de diferencia. La del 2 cayó en el día más activo del cotizador; la del 13, en uno de los más flojos.</p>
+      <p>A mitad de mes la línea va en 4,7 % de la meta de A$2.000. Para alcanzarla harían falta A$1.905 en dieciséis días, cuando el mejor mes medido cerró en A$1.566,78 con treinta.</p>
+      <p>El pedido #Wc0004428 figura en WooCommerce con 29,99 AUD y en el panel con 32,99. Son tres dólares de diferencia que conviene confirmar antes del cierre.</p>
+    </div>
+    <div class="accion"><span class="et">Solución</span>
+      <p>La meta de A$2.000 no se alcanza con el cotizador solo. En septiembre el 63 % del ingreso vino de WhatsApp Operaciones y esas derivaciones no aparecen en octubre: conviene reactivarlas esta semana.</p>
+      <p>Llevar el seguimiento de WhatsApp Operaciones al panel diario, como se definió en el plan de octubre: sin ese dato, el avance de la meta se lee incompleto.</p>
+    </div>
+  </div>
+</section>
+
+<!-- SKILLSPRO -->
+<section class="panel" id="skillspro">
+  <h2 class="titulo">SkillsPRO</h2>
+  <p class="bajada">El enlace en español es la UTM con más tráfico del lote en octubre.</p>
+
+  <div class="embudo">
+    <div class="paso"><div class="orden">1 · Clics</div><div class="v">47</div><div class="l">Sesiones al 15</div></div>
+    <div class="paso"><div class="orden">2 · Reservas GA4</div><div class="v">9</div><div class="l">Tasa 19,1 %</div></div>
+    <div class="paso"><div class="orden">3 · Agendas</div><div class="v">4</div><div class="l">Todas por WhatsApp</div></div>
+    <div class="paso pct"><div class="orden">4 · Meta</div><div class="v">20 %</div><div class="l">4 de 20 agendas</div></div>
+    <div class="paso"><div class="orden">5 · Inscritos</div><div class="v">30</div><div class="l">Webinar del 17 · meta 80 a 100</div></div>
+  </div>
+
+  <div class="bloque">
+    <h3><span class="n">1</span>Tráfico día a día</h3>
+    <div class="serie" style="height:125px"><div class="d"><span class="c">4</span><div class="b morado" style="height:29%"></div></div><div class="d"><span class="c">4</span><div class="b morado" style="height:29%"></div></div><div class="d"><span class="c">1</span><div class="b morado" style="height:7%"></div></div><div class="d"><span class="c v0">0</span><div class="b morado" style="height:0%"></div></div><div class="d"><span class="c">1</span><div class="b morado" style="height:7%"></div></div><div class="d"><span class="c v0">0</span><div class="b morado" style="height:0%"></div></div><div class="d"><span class="c">12</span><div class="b morado" style="height:86%"></div></div><div class="d"><span class="c">14</span><div class="b morado" style="height:100%"></div></div><div class="d"><span class="c">1</span><div class="b morado" style="height:7%"></div></div><div class="d"><span class="c">2</span><div class="b morado" style="height:14%"></div></div><div class="d"><span class="c">3</span><div class="b morado" style="height:21%"></div></div><div class="d"><span class="c v0">0</span><div class="b morado" style="height:0%"></div></div><div class="d"><span class="c v0">0</span><div class="b morado" style="height:0%"></div></div><div class="d"><span class="c">4</span><div class="b morado" style="height:29%"></div></div><div class="d hoy"><span class="c">1</span><div class="b morado" style="height:7%"></div></div></div><div class="eje"><span class="">1</span><span class="">2</span><span class="">3</span><span class="">4</span><span class="">5</span><span class="">6</span><span class="">7</span><span class="">8</span><span class="">9</span><span class="">10</span><span class="">11</span><span class="">12</span><span class="">13</span><span class="">14</span><span class="hoy">15</span></div>
+    <p class="nota">Enlace whatsapp / community / community_es más el del webinar. Las 9 reservas de sesión del mes son de este enlace; la última, el día 11.</p>
+    <div class="tabla-cont" style="margin-top:14px"><table>
+      <thead><tr><th>Enlace</th><th class="num">Sesiones</th><th class="num">Reservas</th><th class="num">Tasa</th></tr></thead>
+      <tbody>
+        <tr><td class="utm">whatsapp / community / community_es</td><td class="num">46</td><td class="num">9</td><td class="num">19,6 %</td></tr>
+        <tr class="apag"><td class="utm">comunidades / webinar / whatssapp</td><td class="num">1</td><td class="num">0</td><td class="num">0 %</td></tr>
+        <tr class="total"><td>Total</td><td class="num">47</td><td class="num">9</td><td class="num">19,1 %</td></tr>
+      </tbody>
+    </table></div>
+    <div class="analisis"><span class="et">Análisis</span>
+      <p>El 7 y el 8 concentraron 26 de las 46 sesiones del enlace: más de la mitad del mes en dos días. Después cayó, volvió con 4 el 14 y hoy lleva 1.</p>
+      <p>La tasa de reserva es del 19,6 %, casi el doble del 11,4 % de septiembre. Una de cada cinco visitas agenda, el mejor rendimiento que ha tenido este enlace.</p>
+    </div>
+    <div class="accion"><span class="et">Solución</span><p>Repetir lo que se publicó el 7 y el 8. Con la tasa actual, cada sesión que entra vale cerca de 0,2 reservas: el cuello está en el volumen, no en la conversión.</p></div>
+  </div>
+
+  <div class="bloque">
+    <h3><span class="n">2</span>Agendas del mes</h3>
+    <div class="tabla-cont"><table>
+      <thead><tr><th>Fecha de la agenda</th><th>Persona</th><th>Canal</th><th>Estado</th><th>Fecha de la consultoría</th></tr></thead>
+      <tbody>
+        <tr><td><b>7 de octubre</b></td><td>Rey García Sotomayor</td><td>WhatsApp</td><td><span class="pill p-med">Invitado</span></td><td>Sin fecha</td></tr>
+        <tr><td><b>7 de octubre</b></td><td>Ruth Lizeth Alzate</td><td>WhatsApp</td><td><span class="pill p-ok">Programada</span></td><td>21 de octubre · 12:30 AEST</td></tr>
+        <tr><td><b>7 de octubre</b></td><td>Fabiola Osores Osores</td><td>WhatsApp</td><td><span class="pill p-ok">Programada</span></td><td>20 de octubre · 09:50 AEST</td></tr>
+        <tr><td><b>9 de octubre</b></td><td>Crhistian Chamane</td><td>WhatsApp</td><td><span class="pill p-med">Invitado</span></td><td>Sin fecha</td></tr>
+        <tr class="total"><td colspan="3">4 agendas · todas por WhatsApp</td><td>2 programadas</td><td>2 sin fecha</td></tr>
+      </tbody>
+    </table></div>
+    <h4 class="graf">Concentración por fecha</h4>
+    <div class="barras">
+      <div class="item"><span>7 de octubre</span><div class="track"><div class="fill f-mo" style="width:100%"></div></div><span class="val">3</span></div>
+      <div class="item"><span>9 de octubre</span><div class="track"><div class="fill f-mo" style="width:33%"></div></div><span class="val">1</span></div>
+      <div class="item"><span>Resto del mes</span><div class="track"><div class="fill f-na" style="width:0%"></div></div><span class="val">0</span></div>
+    </div>
+    <div class="meta">
+      <div class="fila"><span>Meta de octubre · rango 20 a 25</span><span>4 / 20 agendas</span></div>
+      <div class="pista"><div class="avance bajo" style="width:20%">20 %</div></div>
+    </div>
+    <div class="analisis"><span class="et">Análisis</span>
+      <p>Tres de las cuatro agendas se crearon el <b>7 de octubre</b>, el mismo día en que el enlace hizo 12 sesiones y arrancó el pico del mes. Lo que se publicó ese día es el contenido que conviene repetir.</p>
+      <p>Las 4 entraron por WhatsApp. Facebook, que en septiembre aportó 11 de las 18 agendas, no ha generado ninguna en quince días.</p>
+      <p>Hay 9 reservas en GA4 y 4 agendas en Airtable: la diferencia sigue sin conciliar, igual que en septiembre. Y 2 de las 4 siguen sin fecha de consultoría.</p>
+    </div>
+    <div class="accion"><span class="et">Solución</span>
+      <p>Identificar qué se publicó el 7 de octubre y repetirlo: concentra 3 de las 4 agendas del mes y el pico de tráfico del enlace.</p>
+      <p>Darles fecha a las dos invitaciones pendientes antes del webinar, y volver a activar Facebook, que era el canal de volumen y lleva el mes entero sin aportar.</p>
+    </div>
+  </div>
+
+  <div class="bloque">
+    <h3><span class="n">3</span>Inscritos al webinar del 17 de octubre</h3>
+    <div class="tabla-cont"><table>
+      <thead><tr><th>Canal</th><th class="num">Inscritos</th><th class="num">% del aporte de comunidades</th></tr></thead>
+      <tbody>
+        <tr><td>Grupos de WhatsApp</td><td class="num">23</td><td class="num">76,7 %</td></tr>
+        <tr><td>Grupos de Facebook</td><td class="num">7</td><td class="num">23,3 %</td></tr>
+        <tr class="total"><td>Total desde comunidades</td><td class="num">30</td><td class="num">100 %</td></tr>
+      </tbody>
+    </table></div>
+    <div class="meta">
+      <div class="fila"><span>Meta del webinar · rango 80 a 100</span><span>30 / 80 inscritos</span></div>
+      <div class="pista"><div class="avance bajo" style="width:37.5%">37,5 %</div></div>
+    </div>
+    <div class="barras" style="margin-top:16px">
+      <div class="item"><span>Webinar de ingenieros · septiembre</span><div class="track"><div class="fill f-nv" style="width:100%"></div></div><span class="val">71</span></div>
+      <div class="item"><span>Webinar de administración · al 15 oct</span><div class="track"><div class="fill f-am" style="width:42%"></div></div><span class="val">30</span></div>
+      <div class="item"><span>Meta de octubre</span><div class="track"><div class="fill f-na" style="width:113%"></div></div><span class="val">80</span></div>
+    </div>
+    <div class="analisis"><span class="et">Análisis</span>
+      <p>30 inscritos a dos días del evento, el 37,5 % del piso de la meta. El reparto es más desbalanceado que en septiembre: WhatsApp aporta 23 y Facebook 7, cuando en el webinar de ingenieros fueron 44 y 24.</p>
+      <p>Las tres URL etiquetadas del webinar de administración siguen en cero sesiones en quince días, así que estos 30 inscritos llegaron por enlaces sin UTM o por conversación directa.</p>
+    </div>
+    <div class="accion"><span class="et">Solución</span>
+      <p>Los dos días previos son los que más rinden: en septiembre el enlace de WhatsApp convirtió al 46 %. Publicar en el grupo propio y en los externos hoy y mañana es lo que puede cerrar la brecha de 50 inscritos.</p>
+      <p>Revisar qué enlace se está compartiendo: si las publicaciones no llevan la URL etiquetada, el aporte real de comunidades no va a quedar registrado.</p>
+    </div>
+  </div>
+</section>
+
+<!-- AUSTRALIAPRO -->
+<section class="panel" id="australiapro">
+  <h2 class="titulo">AustraliaPRO · Rayos X</h2>
+  <p class="bajada">Las tres UTM de Rayos X llevan más de una semana sin registrar sesiones.</p>
+
+  <div class="embudo">
+    <div class="paso"><div class="orden">1 · Clics</div><div class="v">16</div><div class="l">Sesiones al 15</div></div>
+    <div class="paso cero"><div class="orden">2 · Formularios</div><div class="v">0</div><div class="l">Sin envíos en el mes</div></div>
+    <div class="paso cero"><div class="orden">3 · Agendas</div><div class="v">0</div><div class="l">Meta: 10 legibles</div></div>
+    <div class="paso cero"><div class="orden">4 · Días activos</div><div class="v">6</div><div class="l">Última sesión, el 7</div></div>
+    <div class="paso cero"><div class="orden">5 · Meta</div><div class="v">0 %</div><div class="l">Quedan 16 días</div></div>
+  </div>
+
+  <div class="bloque">
+    <h3><span class="n">1</span>Tráfico día a día</h3>
+    <div class="serie" style="height:110px"><div class="d"><span class="c">1</span><div class="b naranja" style="height:25%"></div></div><div class="d"><span class="c">2</span><div class="b naranja" style="height:50%"></div></div><div class="d"><span class="c">4</span><div class="b naranja" style="height:100%"></div></div><div class="d"><span class="c">2</span><div class="b naranja" style="height:50%"></div></div><div class="d"><span class="c">1</span><div class="b naranja" style="height:25%"></div></div><div class="d"><span class="c">3</span><div class="b naranja" style="height:75%"></div></div><div class="d"><span class="c">3</span><div class="b naranja" style="height:75%"></div></div><div class="d"><span class="c v0">0</span><div class="b naranja" style="height:0%"></div></div><div class="d"><span class="c v0">0</span><div class="b naranja" style="height:0%"></div></div><div class="d"><span class="c v0">0</span><div class="b naranja" style="height:0%"></div></div><div class="d"><span class="c v0">0</span><div class="b naranja" style="height:0%"></div></div><div class="d"><span class="c v0">0</span><div class="b naranja" style="height:0%"></div></div><div class="d"><span class="c v0">0</span><div class="b naranja" style="height:0%"></div></div><div class="d"><span class="c v0">0</span><div class="b naranja" style="height:0%"></div></div><div class="d hoy"><span class="c v0">0</span><div class="b naranja" style="height:0%"></div></div></div><div class="eje"><span class="">1</span><span class="">2</span><span class="">3</span><span class="">4</span><span class="">5</span><span class="">6</span><span class="">7</span><span class="">8</span><span class="">9</span><span class="">10</span><span class="">11</span><span class="">12</span><span class="">13</span><span class="">14</span><span class="hoy">15</span></div>
+    <h4 class="graf">Tráfico por enlace</h4>
+    <div class="tabla-cont"><table>
+      <thead><tr><th>Enlace</th><th class="num">Sesiones</th><th class="num">Conv.</th><th>Estado</th></tr></thead>
+      <tbody>
+        <tr><td class="utm">whatsapp / community / rayos_x · espanol</td><td class="num">9</td><td class="num">0</td><td>Apagada desde el 8</td></tr>
+        <tr><td class="utm">linkedin / community / rayos_x · espanol</td><td class="num">4</td><td class="num">0</td><td>Sin sesiones limpias desde el 4; los clics llegan con el enlace roto</td></tr>
+        <tr><td class="utm">facebook / community / rayos_x · espanol</td><td class="num">3</td><td class="num">0</td><td>Apagada desde el 7</td></tr>
+        <tr class="total"><td>Total</td><td class="num">16</td><td class="num">0</td><td></td></tr>
+      </tbody>
+    </table></div>
+    <div class="analisis"><span class="et">Análisis</span>
+      <p>16 sesiones en quince días contra 80 en septiembre: el tráfico de la línea cayó un 80 % en ritmo diario. Ninguna de las tres URL ha registrado nada después del 7.</p>
+      <p>A eso se suman 6 sesiones de LinkedIn que se perdieron por el enlace mal escrito. Sin ese error, la línea tendría 22 en lugar de 16.</p>
+    </div>
+    <div class="accion"><span class="et">Solución</span>
+      <p>Corregir el enlace de LinkedIn —el «&amp;» publicado como «&amp;amp;»— y volver a mover las tres URL de Rayos X en los grupos.</p>
+      <p>Los creativos de Halloween ya están listos: publicarlos esta semana es la vía más rápida para reactivar la línea antes del cierre de mes.</p>
+    </div>
+  </div>
+
+  <div class="bloque">
+    <h3><span class="n">2</span>Trabajo realizado sin reflejo en el panel</h3>
+    <div class="tabla-cont"><table>
+      <thead><tr><th>Acción</th><th>Estado</th></tr></thead>
+      <tbody>
+        <tr><td>Contenido sobre los cambios migratorios compartido en comunidades</td><td><span class="pill p-ok">En curso</span></td></tr>
+        <tr><td>Respuesta a dudas sobre opciones para continuar en Australia, derivando con la propuesta de valor de Rayos X</td><td><span class="pill p-ok">En curso</span></td></tr>
+        <tr><td>Creativos con temática de Halloween: «el terror de no saber qué paso tomar»</td><td><span class="pill p-med">Listos para publicar</span></td></tr>
+        <tr><td>Agendas generadas</td><td><span class="pill p-no">0 en el mes</span></td></tr>
+      </tbody>
+    </table></div>
+    <div class="analisis"><span class="et">Análisis</span>
+      <p>La conversación sobre cambios migratorios se está dando dentro de los grupos y de WhatsApp, donde no hay UTM que la registre. El panel muestra 16 sesiones, pero ese no es todo el trabajo de la línea.</p>
+      <p>El riesgo es que, si la derivación ocurre solo por mensaje, el mes puede cerrar con actividad alta y cero agendas medibles, como viene pasando.</p>
+    </div>
+    <div class="accion"><span class="et">Solución</span>
+      <p>Acompañar cada respuesta sobre cambios migratorios con el enlace etiquetado de Rayos X, no solo con la explicación. Es la única forma de que ese trabajo aparezca en el reporte.</p>
+      <p>Llevar un registro manual de las personas derivadas a Rayos X por conversación, con fecha y canal, mientras el enlace no se use de forma sistemática.</p>
+    </div>
+  </div>
+</section>
+
+<!-- COMPARATIVO -->
+<section class="panel" id="comparativo">
+  <h2 class="titulo">Septiembre vs octubre</h2>
+  <p class="bajada">Comparación de ventanas iguales: del 1 al 15 de septiembre frente al 1 al 15 de octubre, solo con las UTM del canal de comunidades. En septiembre el canal tenía tres personas; en octubre, una.</p>
+
+  <div class="bloque">
+    <h3><span class="n">1</span>Primeros 15 días: septiembre vs octubre</h3>
+    <div class="tabla-cont"><table>
+      <thead><tr><th>Indicador</th><th class="num">1 al 15 sep</th><th class="num">1 al 15 oct</th><th class="num">Variación</th></tr></thead>
+      <tbody>
+        <tr><td>Personas en el canal</td><td class="num">3</td><td class="num">1</td><td class="num">−67 %</td></tr>
+        <tr><td>Gestiones registradas</td><td class="num">809</td><td class="num">Sin registro</td><td class="num">—</td></tr>
+        <tr><td>Sesiones del canal</td><td class="num">150</td><td class="num">117</td><td class="num">−22 %</td></tr>
+        <tr><td>Sesiones por día</td><td class="num">10,0</td><td class="num">7,8</td><td class="num">−22 %</td></tr>
+        <tr><td>Conversiones</td><td class="num">22</td><td class="num">13</td><td class="num">−41 %</td></tr>
+        <tr><td>Tasa de conversión</td><td class="num">14,7 %</td><td class="num">11,1 %</td><td class="num">−3,6 pp</td></tr>
+        <tr><td>Ingreso confirmado</td><td class="num">361,38</td><td class="num">94,88</td><td class="num">−74 %</td></tr>
+        <tr class="total"><td>Sesiones por persona</td><td class="num">50</td><td class="num">117</td><td class="num">+134 %</td></tr>
+      </tbody>
+    </table></div>
+    <p class="nota">Solo UTM del canal de comunidades. Se excluyen las de medium «social» —YouTube e Instagram—, que corresponden a otros canales del equipo.</p>
+    <h4 class="graf">Sesiones del canal en la misma ventana</h4>
+    <div class="barras">
+      <div class="item"><span>1 al 15 de septiembre · 3 personas</span><div class="track"><div class="fill f-nv" style="width:100%"></div></div><span class="val">150</span></div>
+      <div class="item"><span>1 al 15 de octubre · 1 persona</span><div class="track"><div class="fill f-am" style="width:78%"></div></div><span class="val">117</span></div>
+    </div>
+    <div class="analisis"><span class="et">Análisis</span>
+      <p>La caída de tráfico es del 22 %, pero el canal pasó de tres personas a una. Medido por persona, el rendimiento se multiplicó por 2,3: de 50 sesiones por persona a 117.</p>
+      <p>Lo que sí cayó de verdad es la conversión: de 14,7 % a 11,1 %. La diferencia es el webinar de ingenieros, que en la primera quincena de septiembre aportó 11 de las 22 conversiones. Sin un evento con fecha, el canal convierte alrededor del 11 %.</p>
+      <p>El ingreso cae un 74 %, bastante más que el tráfico. En septiembre las cinco compras de la quincena fueron de ticket más alto: $72 de promedio contra $47 en octubre.</p>
+    </div>
+    <div class="accion"><span class="et">Solución</span>
+      <p>Con una sola persona, el volumen no se recupera publicando más: hay que concentrar en lo que rinde. Los diez grupos que concentraron la mitad de las interacciones de septiembre son el punto de partida.</p>
+      <p>El webinar del 17 es el equivalente al de ingenieros: es la palanca que puede devolver la tasa de conversión al 15 % en la segunda quincena.</p>
+    </div>
+  </div>
+
+  <div class="bloque">
+    <h3><span class="n">2</span>Corrección del cierre de septiembre</h3>
+    <div class="alerta a-verde"><b>Las 8 compras están verificadas una a una</b>
+      7 de cotizador / whatssapp y 1 de cotizador / facebook, todas con su UTM registrada en el pedido y con el mismo importe que GA4. El total definitivo es 514,14 AUD.</div>
+    <div class="alerta a-ambar"><b>La novena compra queda fuera del total</b>
+      GA4 contaba una compra de 65,99 AUD el 14 de septiembre en comunidades / codigod / maria, pero se pagó en el checkout de www.entrelingo.com, fuera de WooCommerce, y no se puede verificar.</div>
+    <div class="alerta a-rojo"><b>Dos días con ingresos imposibles siguen sin explicarse</b>
+      El 9 de septiembre (129.259 AUD) y el 27 (250.952 AUD), los dos en tráfico directo del ecosistema. No afectan a este lote, pero invalidan los informes de ingresos del ecosistema de septiembre hasta localizarlos en el checkout.</div>
+    <div class="analisis"><span class="et">Análisis</span>
+      <p>El cambio de método —verificar pedido a pedido en WooCommerce en lugar de confiar en la atribución de GA4— baja el ingreso de septiembre de 580,13 a 514,14 AUD, pero deja una cifra que se puede defender línea por línea.</p>
+      <p>Septiembre cerró además en 333 sesiones y 33 conversiones, no en las 320 y 31 del panel anterior: la extracción definitiva recuperó sesiones que la consulta previa había truncado.</p>
+    </div>
+    <div class="accion"><span class="et">Solución</span><p>Mantener WooCommerce como única fuente de ingreso en el reporte mensual y usar GA4 solo para localizar los pedidos candidatos.</p></div>
+  </div>
+
+  <div class="bloque">
+    <h3><span class="n">3</span>Avance de las metas de octubre</h3>
+    <div class="tabla-cont"><table>
+      <thead><tr><th>Línea</th><th>Meta de octubre</th><th class="num">Al 15</th><th class="num">Avance</th><th>Referencia de septiembre</th></tr></thead>
+      <tbody>
+        <tr><td>Traducciones</td><td>A$2.000</td><td class="num">94,88</td><td class="num">4,7 %</td><td>A$514,14 verificados</td></tr>
+        <tr><td>SkillsPRO</td><td>20 a 25 agendas</td><td class="num">4</td><td class="num">20 %</td><td>18 agendas</td></tr>
+        <tr><td>AustraliaPRO</td><td>10 agendas legibles</td><td class="num">0</td><td class="num">0 %</td><td>2 elegibles</td></tr>
+        <tr><td>Webinar SkillsPRO</td><td>80 a 100 inscritos</td><td class="num">Pendiente</td><td class="num">—</td><td>71 inscritos</td></tr>
+        <tr><td>JobPRO</td><td>Por definir</td><td class="num">—</td><td class="num">—</td><td>Sin medición</td></tr>
+      </tbody>
+    </table></div>
+    <div class="analisis"><span class="et">Análisis</span>
+      <p>Las tres metas con cifra van por debajo del ritmo necesario a mitad de mes. La de traducciones es la más exigente: A$2.000 suponía crecer un 28 % sobre septiembre y a mitad de camino se lleva el 4,7 %.</p>
+      <p>SkillsPRO es la que está más cerca en proporción, y el webinar del 17 concentra la posibilidad real de cerrar su meta. En septiembre el webinar de ingenieros aportó 71 inscritos y 11 de las conversiones del mes.</p>
+    </div>
+    <div class="accion"><span class="et">Solución</span>
+      <p>Priorizar los dos días previos al webinar: es la acción con mayor retorno demostrado del canal y afecta a la meta de agendas y a la de inscritos al mismo tiempo.</p>
+      <p>Revisar con Sindy si las metas de traducciones y Rayos X siguen siendo alcanzables con dieciséis días por delante, o si conviene ajustarlas con lo que se sabe hoy.</p>
+    </div>
+  </div>
+</section>
+
+</div></main>
+
+<footer><div class="wrap">
+  Octubre de 2026, corte al 15 · el día 15 sigue en curso · Tráfico y conversiones: GA4 Data API, 34 URL etiquetadas sobre cuatro propiedades · Ingresos: WooCommerce, pedido a pedido · Agendas: Airtable.
+</div></footer>
+
+<script>
+(function(){
+  var b=document.querySelectorAll('nav.tabs button'),p=document.querySelectorAll('.panel');
+  b.forEach(function(x){x.addEventListener('click',function(){
+    b.forEach(function(y){y.classList.toggle('on',y===x);});
+    p.forEach(function(q){q.classList.toggle('on',q.id===x.dataset.t);});
+    window.scrollTo({top:0,behavior:'smooth'});
+  });});
+})();
+</script>
+</body>
+</html>
